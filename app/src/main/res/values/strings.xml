@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">LuckyXx</string>
 
-    <string name="enable_accessibility">启动辅助功能</string>
+    <string name="enable_accessibility">启动抢红包功能</string>
+    <string name="action_settings">无用的彩蛋</string>
     <string name="enable_notification">启动通知功能</string>
 </resources>
