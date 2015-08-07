@@ -4,4 +4,5 @@
     <string name="enable_accessibility">启动抢红包功能</string>
     <string name="action_settings">无用的彩蛋</string>
     <string name="enable_notification">启动通知功能</string>
+    <string name="description">可以自动帮你抢红包，拼手速的时代过去就让它过去吧！！！</string>
 </resources>

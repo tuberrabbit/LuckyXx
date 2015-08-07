@@ -20,7 +20,8 @@
         </activity>
         <service android:name=".FetchLuckyMoneyService"
             android:label="@string/enable_accessibility"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:description="@string/description">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
