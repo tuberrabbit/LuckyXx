@@ -15,11 +15,14 @@ public class LaunchActivity extends Activity {
     private Switch accessibility;
     private Switch notification;
 
+    public static Activity context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
 
+        context = this;
         accessibility = (Switch) findViewById(R.id.accessibility);
         notification = (Switch) findViewById(R.id.notification);
 

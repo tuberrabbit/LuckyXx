@@ -39,4 +39,8 @@ public class NotificationListener extends NotificationListenerService {
             }
         }
     }
+
+    @Override
+    public void onNotificationRemoved(StatusBarNotification sbn) {
+    }
 }

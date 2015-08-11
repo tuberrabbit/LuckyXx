@@ -1,15 +1,14 @@
 package com.thoughtworks.btu.luckyxx;
 
 import android.accessibilityservice.AccessibilityService;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.PowerManager;
 import android.text.TextUtils;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.RemoteViews;
@@ -21,8 +20,8 @@ import java.util.List;
 public class FetchLuckyMoneyService extends AccessibilityService {
     private ArrayList<AccessibilityNodeInfo> mNodeInfoList = new ArrayList<AccessibilityNodeInfo>();
     private boolean isLuckyMoneyClicked;
-    private boolean mContainsLucky;
-    private boolean mContainsOpenLucky;
+    private boolean isContainsLucky;
+    private boolean isContainsOpenLucky;
 
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -56,23 +55,23 @@ public class FetchLuckyMoneyService extends AccessibilityService {
             if (null != nodeInfo) {
                 mNodeInfoList.clear();
                 traverseNode(nodeInfo);
-                if (mContainsLucky && !isLuckyMoneyClicked) {
+                if (isContainsLucky && !isLuckyMoneyClicked) {
                     int size = mNodeInfoList.size();
                     if (size > 0) {
                         /** step1: get the last hongbao cell to fire click action */
                         AccessibilityNodeInfo cellNode = mNodeInfoList.get(size - 1);
-                        cellNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        mContainsLucky = false;
+                        System.out.println("alibaba"+cellNode.performAction(AccessibilityNodeInfo.ACTION_CLICK));
+                        isContainsLucky = false;
                         isLuckyMoneyClicked = true;
                     }
                 }
-                if (mContainsOpenLucky) {
+                if (isContainsOpenLucky) {
                     int size = mNodeInfoList.size();
                     if (size > 0) {
                         /** step2: when hongbao clicked we need to open it, so fire click action */
                         AccessibilityNodeInfo cellNode = mNodeInfoList.get(size - 1);
                         cellNode.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        mContainsOpenLucky = false;
+                        isContainsOpenLucky = false;
                     }
                 }
             }
@@ -80,16 +79,10 @@ public class FetchLuckyMoneyService extends AccessibilityService {
     }
 
     private void unlockScreen() {
-        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-        final KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("MyKeyguardLock");
-        keyguardLock.disableKeyguard();
-
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK
-                | PowerManager.ACQUIRE_CAUSES_WAKEUP
-                | PowerManager.ON_AFTER_RELEASE, "MyWakeLock");
-
-        wakeLock.acquire();
+        Window window = LaunchActivity.context.getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     private List<String> getText(Notification notification) {
@@ -155,13 +148,13 @@ public class FetchLuckyMoneyService extends AccessibilityService {
             if (null != text && text.length() > 0) {
                 String str = text.toString();
                 if (str.contains("领取红包")) {
-                    mContainsLucky = true;
-                    AccessibilityNodeInfo cellNode = node.getParent().getParent().getParent();
+                    isContainsLucky = true;
+                    AccessibilityNodeInfo cellNode = node.getParent().getParent().getParent().getParent();
                     if (null != cellNode) mNodeInfoList.add(cellNode);
                 }
 
                 if (str.contains("拆红包")) {
-                    mContainsOpenLucky = true;
+                    isContainsOpenLucky = true;
                     mNodeInfoList.add(node);
                 }
             }
