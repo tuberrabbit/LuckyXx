@@ -23,7 +23,6 @@
 
         <service
             android:name=".FetchLuckyMoneyService"
-            android:description="@string/description"
             android:label="@string/enable_accessibility"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Switch;
 
 
@@ -20,6 +21,7 @@ public class LaunchActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        unlockScreen();
         setContentView(R.layout.activity_launch);
 
         context = this;
@@ -31,6 +33,12 @@ public class LaunchActivity extends Activity {
         } else {
             notification.setVisibility(View.GONE);
         }
+    }
+
+    private void unlockScreen() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
 
     public void handleFetchLuckyMoneyButtonClicked(View view) {

@@ -3,6 +3,7 @@ package com.thoughtworks.btu.luckyxx;
 import android.accessibilityservice.AccessibilityService;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -28,7 +29,7 @@ public class FetchLuckyMoneyService extends AccessibilityService {
         final int eventType = event.getEventType();
 
         if (eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
-            unlockScreen();
+            launchActivity();
             isLuckyMoneyClicked = false;
 
             if (Build.VERSION.SDK_INT < 18) {
@@ -78,7 +79,10 @@ public class FetchLuckyMoneyService extends AccessibilityService {
         }
     }
 
-    private void unlockScreen() {
+    private void launchActivity() {
+//        Intent intent = new Intent(this, LaunchActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(intent);
         Window window = LaunchActivity.context.getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
