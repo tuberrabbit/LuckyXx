@@ -2,6 +2,7 @@ package com.thoughtworks.btu.luckyxx;
 
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationListener extends NotificationListenerService {
+    public static final String PAR_KEY = "com.thoughtworks.btu.luckyxx";
+
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         Notification notification = sbn.getNotification();
@@ -28,16 +31,23 @@ public class NotificationListener extends NotificationListenerService {
                     for (String text : textList) {
                         if (!TextUtils.isEmpty(text) && text.contains("[微信红包]")) {
                             final PendingIntent pendingIntent = notification.contentIntent;
-                            try {
-                                pendingIntent.send();
-                            } catch (PendingIntent.CanceledException e) {
-                            }
+
+                            launchActivity(pendingIntent);
                             break;
                         }
                     }
                 }
             }
         }
+    }
+
+    private void launchActivity(PendingIntent pendingIntent) {
+        Intent intent = new Intent(this, LaunchActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(PAR_KEY, pendingIntent);
+        intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     @Override
