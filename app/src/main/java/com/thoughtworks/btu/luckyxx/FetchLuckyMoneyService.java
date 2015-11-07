@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FetchLuckyMoneyService extends AccessibilityService {
+    public static final String PAR_KEY = "com.thoughtworks.btu.luckyxx";
+
     private ArrayList<AccessibilityNodeInfo> mNodeInfoList = new ArrayList<AccessibilityNodeInfo>();
     private boolean isLuckyMoneyClicked;
     private boolean isContainsLucky;
@@ -29,7 +32,6 @@ public class FetchLuckyMoneyService extends AccessibilityService {
         final int eventType = event.getEventType();
 
         if (eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED) {
-            launchActivity();
             isLuckyMoneyClicked = false;
 
             if (Build.VERSION.SDK_INT < 18) {
@@ -39,10 +41,8 @@ public class FetchLuckyMoneyService extends AccessibilityService {
                     for (String text : textList) {
                         if (!TextUtils.isEmpty(text) && text.contains("[微信红包]")) {
                             final PendingIntent pendingIntent = notification.contentIntent;
-                            try {
-                                pendingIntent.send();
-                            } catch (PendingIntent.CanceledException e) {
-                            }
+
+                            launchActivity(pendingIntent);
                             break;
                         }
                     }
@@ -61,7 +61,7 @@ public class FetchLuckyMoneyService extends AccessibilityService {
                     if (size > 0) {
                         /** step1: get the last hongbao cell to fire click action */
                         AccessibilityNodeInfo cellNode = mNodeInfoList.get(size - 1);
-                        System.out.println("alibaba"+cellNode.performAction(AccessibilityNodeInfo.ACTION_CLICK));
+                        System.out.println("alibaba" + cellNode.performAction(AccessibilityNodeInfo.ACTION_CLICK));
                         isContainsLucky = false;
                         isLuckyMoneyClicked = true;
                     }
@@ -79,14 +79,13 @@ public class FetchLuckyMoneyService extends AccessibilityService {
         }
     }
 
-    private void launchActivity() {
-//        Intent intent = new Intent(this, LaunchActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(intent);
-        Window window = LaunchActivity.context.getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+    private void launchActivity(PendingIntent pendingIntent) {
+        Intent intent = new Intent(this, LaunchActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(PAR_KEY, pendingIntent);
+        intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private List<String> getText(Notification notification) {

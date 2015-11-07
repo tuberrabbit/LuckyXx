@@ -1,6 +1,7 @@
 package com.thoughtworks.btu.luckyxx;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,15 +17,12 @@ public class LaunchActivity extends Activity {
     private Switch accessibility;
     private Switch notification;
 
-    public static Activity context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         unlockScreen();
         setContentView(R.layout.activity_launch);
 
-        context = this;
         accessibility = (Switch) findViewById(R.id.accessibility);
         notification = (Switch) findViewById(R.id.notification);
 
@@ -32,6 +30,22 @@ public class LaunchActivity extends Activity {
             notification.setVisibility(View.VISIBLE);
         } else {
             notification.setVisibility(View.GONE);
+        }
+
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        try {
+            PendingIntent pendingIntent = getIntent().getParcelableExtra(FetchLuckyMoneyService.PAR_KEY);
+            if (pendingIntent != null) {
+                pendingIntent.send();
+
+                finish();
+            }
+        } catch (PendingIntent.CanceledException e) {
+            e.printStackTrace();
         }
     }
 
